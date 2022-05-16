@@ -26,7 +26,7 @@ router.put("/favorite/add/:id", verifyToken, async (req, res) => {
     const targetUser = req.body.targetUserId;
     currentUser !== paramUser &&
       res.status(401).json("can not update other user");
-    !targetUser && res.status(401).json("target user does not exist") 
+    !targetUser && res.status(401).json("target user does not exist");
     const updatedUser = await User.findByIdAndUpdate(
       paramUser,
       {
@@ -45,28 +45,78 @@ router.put("/favorite/add/:id", verifyToken, async (req, res) => {
 });
 
 router.put("/favorite/delete/:id", verifyToken, async (req, res) => {
-    try {
-      const currentUser = req.valid.signedId;
-      const paramUser = req.params.id;
-      const targetUser = req.body.targetUserId;
-      currentUser !== paramUser &&
-        res.status(401).json("can not update other user");
-      !targetUser && res.status(401).json("target user does not exist") 
-      const updatedUser = await User.findByIdAndUpdate(
-        paramUser,
-        {
-          $pull: {
-            favorites: {
-              userid: targetUser,
-            },
+  try {
+    const currentUser = req.valid.signedId;
+    const paramUser = req.params.id;
+    const targetUser = req.body.targetUserId;
+    currentUser !== paramUser &&
+      res.status(401).json("can not update other user");
+    !targetUser && res.status(401).json("target user does not exist");
+    const updatedUser = await User.findByIdAndUpdate(
+      paramUser,
+      {
+        $pull: {
+          favorites: {
+            userid: targetUser,
           },
         },
-        { new: true }
-      );
-      res.status(200).json(updatedUser);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  });
+      },
+      { new: true }
+    );
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+router.put("/favorite/add/:id", verifyToken, async (req, res) => {
+  try {
+    const currentUser = req.valid.signedId;
+    const paramUser = req.params.id;
+    const targetUser = req.body.targetUserId;
+    currentUser !== paramUser &&
+      res.status(401).json("can not update other user");
+    !targetUser && res.status(401).json("target user does not exist");
+    const updatedUser = await User.findByIdAndUpdate(
+      paramUser,
+      {
+        $push: {
+          liked: {
+            userid: targetUser,
+          },
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+router.put("/liked/delete/:id", verifyToken, async (req, res) => {
+  try {
+    const currentUser = req.valid.signedId;
+    const paramUser = req.params.id;
+    const targetUser = req.body.targetUserId;
+    currentUser !== paramUser &&
+      res.status(401).json("can not update other user");
+    !targetUser && res.status(401).json("target user does not exist");
+    const updatedUser = await User.findByIdAndUpdate(
+      paramUser,
+      {
+        $pull: {
+          liked: {
+            userid: targetUser,
+          },
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 
 module.exports = router;
