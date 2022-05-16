@@ -119,4 +119,26 @@ router.put("/liked/delete/:id", verifyToken, async (req, res) => {
   }
 });
 
+router.put("/introduct/:id", verifyToken, async (req, res) => {
+  try {
+    const currentUser = req.valid.signedId;
+    const paramUser = req.params.id;
+    currentUser !== paramUser &&
+      res.status(401).json("can not update other user");
+    const updatedUser = await User.findByIdAndUpdate(
+      paramUser,
+      {
+        $set: {
+          avatar: req.body.avatar,
+          introduction: req.body.introduction,
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 module.exports = router;
