@@ -69,7 +69,7 @@ router.put("/favorite/delete/:id", verifyToken, async (req, res) => {
   }
 });
 
-router.put("/favorite/add/:id", verifyToken, async (req, res) => {
+router.put("/liked/add/:id", verifyToken, async (req, res) => {
   try {
     const currentUser = req.valid.signedId;
     const paramUser = req.params.id;
@@ -131,6 +131,27 @@ router.put("/introduct/:id", verifyToken, async (req, res) => {
         $set: {
           avatar: req.body.avatar,
           introduction: req.body.introduction,
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+router.put("/update/:id", verifyToken, async (req, res) => {
+  try {
+    const currentUser = req.valid.signedId;
+    const paramUser = req.params.id;
+    currentUser !== paramUser &&
+      res.status(401).json("can not update other user");
+    const updatedUser = await User.findByIdAndUpdate(
+      paramUser,
+      {
+        $set: {
+          email: req.body.email,
         },
       },
       { new: true }
